@@ -15,6 +15,7 @@ if(isset($_GET['id']) && !empty($_GET['id'])){
         $row_name = $fetch['name'];
         $row_email = $fetch['email'];
         $row_password = $fetch['password'];
+        $row_img = $fetch['img'];
     }
 }
 
@@ -23,15 +24,16 @@ if(isset($_POST['submitData'])){
     $email = stripslashes($_POST['email']);
     $password = md5(stripslashes($_POST['password']));
     $passQuery = (!empty($_POST['password'])) ? $password : $row_password;
-    $img = "";
 
-    if(isset($_FILES['img'])){
+    if(isset($_FILES['img']) && !empty($_FILES['img']['name'])){
         $image_tmp_name = $_FILES['img']['tmp_name'];
         $imageExtention = explode('.', $_FILES['img']['name']);
         $img = date("Ymd") . rand(10000000, 99999999999) . '.' . end($imageExtention);
 
         $folder = "/imgs/" . $img;
         move_uploaded_file($image_tmp_name, dirname(__DIR__) . $folder);
+    }else{
+        $img = $row_img;
     }
 
     $updateQuery = "UPDATE users SET `name`='$name',`password`='$passQuery', `img`='$img' WHERE id=$EditedID;";
